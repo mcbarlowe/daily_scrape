@@ -163,9 +163,11 @@ def main():
             new_pbp_df = new_pbp_df.apply(calc_adjusted_stats.calc_adjusted_columns,
                                           axis=1)
 
+#insert pbp into the sql database
+            sched_insert(new_pbp_df, 'master_pbp')
+
+#insert new players into the player database
             process_players.process_players(shifts_df)
-        #calc all player individual and on-ice stats for all strengths
-        #both adjusted and unadjusted
 
 #calculating all situation stats
             print(f'Calculating {key} player stats')
