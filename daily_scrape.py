@@ -28,7 +28,7 @@ def sched_insert(df, table_name):
         engine.dispose()
     except Exception as e:
         logging.exception("Error inserting dataframe to database")
-        raise
+        raise ValueError
 
 def get_yest_games(date):
     '''
