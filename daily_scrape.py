@@ -18,13 +18,17 @@ from calc_team_stats import calc_team_metrics
 
 def sched_insert(df, table_name):
 
-    print('Inserting DataFrame to the Database')
-    engine = create_engine(os.environ.get('DEV_DB_CONNECT'))
-    df.to_sql(table_name, schema='nhl_tables', con=engine,
-              if_exists='append', index=False)
+    try:
+        print('Inserting DataFrame to the Database')
+        engine = create_engine(os.environ.get('DEV_DB_CONNECT'))
+        df.to_sql(table_name, schema='nhl_tables', con=engine,
+                  if_exists='append', index=False)
 
 #close connection to the database
-    engine.dispose()
+        engine.dispose()
+    except Exception as e:
+        logging.exception("Error inserting dataframe to database")
+        raise
 
 def get_yest_games(date):
     '''
@@ -235,12 +239,12 @@ def main():
             team_4v3 = calc_team_metrics(new_pbp_df, [5], [4])
             team_3v4 = calc_team_metrics(new_pbp_df, [4], [5])
 
-            team_tables = ['team_3v3', 'team_3v3_adj', 'team_3v4', 'team_3v4_adj',
-                           'team_3v5', 'team_3v5_adj', 'team_4v3', 'team_4v3_adj',
-                           'team_4v4', 'team_4v4_adj', 'team_4v5', 'team_4v5_adj',
-                           'team_5v3', 'team_5v3_adj', 'team_5v4', 'team_5v4_adj',
-                           'team_5v5', 'team_5v5_adj', 'team_allsits',
-                           'team_allsits_adj']
+            team_tables = ['team_3v3',  'team_3v4',
+                           'team_3v5', 'team_4v3',
+                           'team_4v4', 'team_4v5',
+                           'team_5v3', 'team_5v4',
+                           'team_5v5', 'team_allsits'
+                           ]
 
             team_data = [team_3v3, team_3v4, team_3v5,
                          team_4v3, team_4v4, team_4v5,
