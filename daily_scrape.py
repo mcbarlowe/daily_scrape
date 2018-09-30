@@ -23,6 +23,9 @@ def sched_insert(df, table_name):
     df.to_sql(table_name, schema='nhl_tables', con=engine,
               if_exists='append', index=False)
 
+#close connection to the database
+    engine.dispose()
+
 def get_yest_games(date):
     '''
     This function will return a list of game ids of NHL games played on the
