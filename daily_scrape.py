@@ -170,6 +170,7 @@ def main():
             new_pbp_df = new_pbp_df.apply(calc_adjusted_stats.calc_adjusted_columns,
                                           axis=1)
 
+            new_pbp_df = clean_pbp.final_pbp_clean(new_pbp_df)
 #insert pbp into the sql database
             sched_insert(new_pbp_df, 'master_pbp')
 

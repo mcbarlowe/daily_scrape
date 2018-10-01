@@ -38,6 +38,10 @@ def final_pbp_clean(pbp):
     pbp[['adj_corsi', 'adj_fenwick', 'adj_xg']] = \
             pbp[['adj_corsi', 'adj_fenwick', 'adj_xg']].astype(float)
 
+#filter out weird occurances where rows are all zeros sometimes probably
+#comes from filling nas with zero and some rows are all nan
+    pbp = pbp[pbp.date != 0]
+
     return pbp
 
 
@@ -109,6 +113,10 @@ def clean_goalie(row, away_goalie, away_goalie_id, home_goalie, home_goalie_id):
 #get rid of empty strings
     away_goalie_id[away_goalie_id == ''] = 0
     home_goalie_id[home_goalie_id == ''] = 0
+    if row['away_goalie_id'] == '':
+        row['away_goalie_id'] = 0
+    if row['home_goalie_id'] == '':
+        row['home_goalie_id'] = 0
 
     away_goalie = away_goalie[~pd.isnull(away_goalie)]
     away_goalie_id = away_goalie_id[~pd.isnull(away_goalie_id)].astype(int)
