@@ -85,4 +85,10 @@ def calc_goalie_metrics(pbp_df, first_skaters, second_skaters):
     #need to add in toi here
     goalie_stats = pd.concat([home_goalie_stats, away_goalie_stats])
 
-    return goalie_stats
+    try:
+        goalie_stats = goalie_stats[goalie_stats.goalie != '']
+        return goalie_stats
+    except TypeError as e:
+        return goalie_stats
+
+

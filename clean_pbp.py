@@ -123,6 +123,9 @@ def clean_goalie(row, away_goalie, away_goalie_id, home_goalie, home_goalie_id):
     home_goalie = home_goalie[~pd.isnull(home_goalie)]
     home_goalie_id = home_goalie_id[~pd.isnull(home_goalie_id)].astype(int)
 
+    away_goalie = [x for x in away_goalie if x != '']
+    home_goalie = [x for x in home_goalie if x != '']
+
     for goalie, goalie_id in zip(away_goalie, away_goalie_id):
         if np.where(row[['awayplayer1', 'awayplayer2', 'awayplayer3', 'awayplayer4', 'awayplayer5', 'awayplayer6']].isin([goalie]), 1, 0).sum() > 0:
             row.loc[('away_goalie', 'away_goalie_id')] = goalie, int(goalie_id)
