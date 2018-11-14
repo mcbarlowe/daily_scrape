@@ -10,6 +10,8 @@ import merge_shift_and_pbp as oi_matrix
 import clean_pbp
 import calc_adjusted_stats
 import parse_players
+import boto3
+from botocore.exceptions import ClientError
 from sqlalchemy import create_engine
 from calc_all_sits_ind_stats import calc_ind_metrics, calc_adj_ind_metrics
 from calc_all_sits_onice_stats import calc_onice_stats, calc_adj_onice_stats
@@ -170,7 +172,7 @@ def main():
 
             new_pbp_df = clean_pbp.final_pbp_clean(new_pbp_df)
 #insert pbp into the sql database
-            sched_insert(new_pbp_df, 'master_pbp')
+            #sched_insert(new_pbp_df, 'master_pbp')
 
 #insert new players into the player database
             process_players.process_players(shifts_df)
@@ -217,7 +219,7 @@ def main():
                       'player_5v3', 'player_5v3_adj', 'player_5v4', 'player_5v4_adj',
                       'player_5v5', 'player_5v5_adj', 'player_allsits',
                       'player_allsits_adj']
-
+            '''
 #insert player stats into the database
             for df, table in zip(data, tables):
                 if df['toi'].sum() > 0:
@@ -283,9 +285,62 @@ def main():
                     sched_insert(df[df.toi > 0], table)
 
             logging.info(f'{key} goalie stats calculated and inserted')
+            '''
 
         except (AttributeError, ValueError) as e:
             logging.exception(f'Game Id {key} did not scrape')
+
+            SENDER = "barloweanalytics@gmail.com"
+            RECIPIENT = "mcbarlowe@gmail.com"
+
+            AWS_REGION = "us-east-1"
+
+            SUBJECT = "Scraping Error Last night"
+
+            BODY_TEXT = f'Game Id {key} did not scrape\r\n{e}'
+            print(BODY_TEXT)
+
+# The HTML body of the email.
+
+# The character encoding for the email.
+            CHARSET = "UTF-8"
+
+# Create a new SES resource and specify a region.
+            client = boto3.client('ses',region_name=AWS_REGION)
+
+# Try to send the email.
+            try:
+                #Provide the contents of the email.
+                response = client.send_email(
+                    Destination={
+                        'ToAddresses': [
+                            RECIPIENT,
+                        ],
+                    },
+                    Message={
+                        'Body': {
+
+                            'Text': {
+                                'Charset': CHARSET,
+                                'Data': BODY_TEXT,
+                            },
+                        },
+                        'Subject': {
+                            'Charset': CHARSET,
+                            'Data': SUBJECT,
+                        },
+                    },
+                    Source=SENDER,
+                    # If you are not using a configuration set, comment or delete the
+                    # following line
+                    #ConfigurationSetName=CONFIGURATION_SET,
+                )
+# Display an error if something goes wrong.
+            except ClientError as e:
+                print(e.response['Error']['Message'])
+            else:
+                print("Email sent! Message ID:"),
+                print(response['MessageId'])
 
 
     #TODO write code to write all the games with erros to a file that another
