@@ -117,7 +117,6 @@ def main():
 
 
 #setup logger to write out stuff to log file for debugging/warnings
-#TODO changing logging level to info once script is ready
     logging.basicConfig(filename='daily_nhl_scraper.log',
                         format="%(asctime)s:%(levelname)s:%(message)s",
                         level=logging.INFO)
@@ -127,11 +126,10 @@ def main():
     date = datetime.datetime.now() - datetime.timedelta(1)
     date = date.strftime('%Y-%m-%d')
 
-#TODO remove test date once script is fully functional
     #test_date = "2018-01-09"
     game_ids = get_yest_games(date)
 
-    #game_ids = [2017020001]
+    #game_ids = [2018020189, 2018020190, 2018020191]
     if game_ids == None:
         logging.info("No games played today")
         return
