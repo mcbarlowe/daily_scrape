@@ -131,7 +131,7 @@ def main():
     #test_date = "2018-01-09"
     game_ids = get_yest_games(date)
 
-    #game_ids = [2018020189, 2018020190, 2018020191]
+    #game_ids = [2018020055]
     if game_ids == None:
         logging.info("No games played today")
         return
@@ -172,7 +172,7 @@ def main():
 
             new_pbp_df = clean_pbp.final_pbp_clean(new_pbp_df)
 #insert pbp into the sql database
-            #sched_insert(new_pbp_df, 'master_pbp')
+            sched_insert(new_pbp_df, 'master_pbp')
 
 #insert new players into the player database
             process_players.process_players(shifts_df)
@@ -219,7 +219,6 @@ def main():
                       'player_5v3', 'player_5v3_adj', 'player_5v4', 'player_5v4_adj',
                       'player_5v5', 'player_5v5_adj', 'player_allsits',
                       'player_allsits_adj']
-            '''
 #insert player stats into the database
             for df, table in zip(data, tables):
                 if df['toi'].sum() > 0:
@@ -285,7 +284,6 @@ def main():
                     sched_insert(df[df.toi > 0], table)
 
             logging.info(f'{key} goalie stats calculated and inserted')
-            '''
 
         except (AttributeError, ValueError) as e:
             logging.exception(f'Game Id {key} did not scrape')
