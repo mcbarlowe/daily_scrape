@@ -85,9 +85,9 @@ def clean_pbp(new_pbp):
 #added in because some shifts are only 0 to 0 seconds and come in before the period start
 #and cause a date NaN
     new_pbp['date'] = new_pbp['date'].fillna(new_pbp.date.unique()[pd.notna(new_pbp.date.unique())][0])
-    new_pbp.loc[:, ('p1_id')] = new_pbp.loc[:, ('p1_id')].fillna(0).astype(int)
-    new_pbp.loc[:, ('p2_id')] = new_pbp.loc[:, ('p2_id')].fillna(0).astype(int)
-    new_pbp.loc[:, ('p3_id')] = new_pbp.loc[:, ('p3_id')].fillna(0).astype(int)
+    new_pbp.loc[:, ('p1_id')] = new_pbp.loc[:, ('p1_id')].replace('', 0).fillna(0).astype(int)
+    new_pbp.loc[:, ('p2_id')] = new_pbp.loc[:, ('p2_id')].replace('', 0).fillna(0).astype(int)
+    new_pbp.loc[:, ('p3_id')] = new_pbp.loc[:, ('p3_id')].replace('', 0).fillna(0).astype(int)
 
     return new_pbp
 
@@ -113,6 +113,11 @@ def clean_goalie(row, away_goalie, away_goalie_id, home_goalie, home_goalie_id):
 #get rid of empty strings
     away_goalie_id[away_goalie_id == ''] = 0
     home_goalie_id[home_goalie_id == ''] = 0
+    away_goalie_id[away_goalie_id == 'NA'] = 0
+    home_goalie_id[home_goalie_id == 'NA'] = 0
+
+#not sure why this is here but am leaving it here for now as I don't want
+#to break anything
     if row['away_goalie_id'] == '':
         row['away_goalie_id'] = 0
     if row['home_goalie_id'] == '':
